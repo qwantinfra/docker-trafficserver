@@ -1,6 +1,14 @@
-FROM debian:jessie
+FROM debian:buster
 
-# Update the package repository
+RUN DEBIAN_FRONTEND=noninteractive addgroup --gid 1000 trafficserver \
+  && DEBIAN_FRONTEND=noninteractive adduser --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-login --uid 1000 --ingroup trafficserver --shell /bin/sh trafficserver
+
+RUN set -x \
+ && DEBIAN_FRONTEND=noninteractive apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y locales lsb-base
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && /usr/sbin/locale-gen
+
 RUN set -x \
  && DEBIAN_FRONTEND=noninteractive apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -26,8 +34,8 @@ RUN set -x \
     # https://trafficserver.apache.org/downloads
  && mkdir /tmp/trafficserver \
  && cd /tmp/trafficserver \
- && curl -L http://www-eu.apache.org/dist/trafficserver/trafficserver-7.0.0.tar.bz2 | tar -xj --strip-components 1 \
- && ./configure \
+ && curl -L http://www-eu.apache.org/dist/trafficserver/trafficserver-7.1.6.tar.bz2 | tar -xj --strip-components 1 \
+ && ./configure --prefix=/ \
  && make install \
  && cd / \
     # Install dumb-init
@@ -48,7 +56,7 @@ RUN set -x \
  && apt-get clean \
  && rm -rf /tmp/* /var/lib/apt/lists/*
 
-EXPOSE 8080
+RUN chown trafficserver:trafficserver /var/trafficserver
 
 ENTRYPOINT ["dumb-init"]
 CMD ["traffic_cop", "--stdout"]
