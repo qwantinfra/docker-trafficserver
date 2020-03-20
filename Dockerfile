@@ -34,7 +34,7 @@ RUN set -x \
     # https://trafficserver.apache.org/downloads
  && mkdir /tmp/trafficserver \
  && cd /tmp/trafficserver \
- && curl -L http://www-eu.apache.org/dist/trafficserver/trafficserver-7.1.6.tar.bz2 | tar -xj --strip-components 1 \
+ && curl -L http://www-eu.apache.org/dist/trafficserver/trafficserver-7.1.9.tar.bz2 | tar -xj --strip-components 1 \
  && ./configure --prefix=/ \
  && make install \
  && cd / \
